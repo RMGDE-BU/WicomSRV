@@ -1,0 +1,286 @@
+{------------------------------------------------------------------------------}
+{ Startfenster für Wieser-Aplikationen                                         }
+{                                                                              }
+{ 02.08.2004  GD  Position des Labels geändert                                 }
+{                                                                              }
+{ Copyright (C) Karl Wieser GmbH 1995, 2004                                    }
+{------------------------------------------------------------------------------}
+unit Startwin;
+
+interface
+
+uses
+  SysUtils, WinTypes, WinProcs, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ExtCtrls, jpeg, WGraphics;
+
+type
+  TStartFenster = class(TForm)
+    TimerLiveImageStart: TTimer;
+    pnBorder: TPanel;
+    pnCaption: TPanel;
+    pBackgroundRMG: TPanel;
+    Panel4: TPanel;
+    imgeRMGMesstechnik: TImage;
+    Panel3: TPanel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label21: TLabel;
+    Label14: TLabel;
+    Label16: TLabel;
+    Label22: TLabel;
+    LHttp: TLabel;
+    LEmail: TLabel;
+    imgeRMGGroup: TImage;
+    imgeWico22: TImage;
+    pnMessage: TPanel;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure TimerLiveImageStartTimer(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    { Private-Deklarationen }
+    FRectRMGMT  : TRect;
+    FRectImgMT  : TRect;
+    FRectRMGGRP : TRect;
+    FRectImgGr  : TRect;
+    FRectWico22 : TRect;
+    FRectImgWico22 : TRect;
+    FBmRMGMT    : TBitmap;
+    FBmRMGGRP   : TBitmap;
+    FBmWico22   : TBitmap;
+    FRunDir     : byte;
+    FFirstShow  : boolean;
+    FStopLive   : boolean;
+    FLiveFlag   : byte;
+    FStartBlend : SmallInt;
+    FStarted    : boolean;
+    FUpDownChange : boolean;
+    procedure InitBitmaps(bState: boolean);
+    procedure BuildLiveImage;
+  public
+    { Public-Deklarationen }
+  end;
+
+procedure StartFensterZeigen(
+  Beschriftung: string; bEnableTimer: boolean = True);
+procedure StartFensterSchliessen;
+
+var
+  StartFenster: TStartFenster;
+
+implementation
+
+{$R *.DFM}
+
+{--------------------------- Allgemeine Funktionen ----------------------------}
+
+{--------------------------------------------}
+procedure StartFensterZeigen(Beschriftung: string; bEnableTimer: boolean = True);
+{--------------------------------------------}
+begin
+  StartFenster := TStartFenster.Create(nil);
+  StartFenster.TimerLiveImageStart.Enabled := bEnableTimer;
+  StartFenster.pnCaption.Caption := Beschriftung;
+  StartFenster.Show;
+  Application.ProcessMessages;
+end;
+
+{--------------------------------------------}
+procedure StartFensterSchliessen;
+{--------------------------------------------}
+begin
+  if (Assigned(StartFenster)) then StartFenster.Close;
+end;
+
+{------------------------------- TStartFenster --------------------------------}
+
+{--------------------------------------------}
+procedure TStartFenster.FormCreate(Sender: TObject);
+{--------------------------------------------}
+begin
+  Screen.Cursor := crHourglass;
+  pnBorder.Color := C_ColorRMG_Messtechnik;
+
+  FFirstShow := True;
+  FLiveFlag := 1;
+  FStartBlend := 0;
+  FStarted := True;
+  FUpDownChange := False;
+  TimerLiveImageStart.Enabled := True;
+end;
+
+{--------------------------------------------}
+procedure TStartFenster.FormDestroy(Sender: TObject);
+{--------------------------------------------}
+begin
+  InitBitmaps(False);
+end;
+
+{--------------------------------------------}
+procedure TStartFenster.FormClose(Sender: TObject; var Action: TCloseAction);
+{--------------------------------------------}
+begin
+  Screen.Cursor := crDefault;
+  Action := caFree;
+  StartFenster := nil;
+end;
+
+{--------------------------------------------}
+procedure TStartFenster.InitBitmaps(bState: boolean);
+{--------------------------------------------}
+var
+  iFormat  : word;
+  iData    : THandle;
+  pPalette : HPalette;
+  Cursor_Save: TCursor;
+
+begin
+  if (bState) then begin
+    Cursor_Save:=Screen.Cursor;
+    Screen.Cursor:=crHourGlass;
+    try
+      FBmRMGMT := TBitmap.Create;
+      imgeRMGMesstechnik.Picture.SaveToClipboardFormat(iFormat, iData, pPalette);
+      FBmRMGMT.LoadFromClipboardFormat(iFormat, iData, pPalette);
+      FRectRMGMT := Rect(0, 0, FBmRMGMT.Width, FBmRMGMT.Height);
+      FRectImgMT :=
+        CalculateFittingRect(imgeRMGMesstechnik.ClientRect, FRectRMGMT, 0);
+      imgeRMGMesstechnik.Picture := nil;
+
+      FBmRMGGRP := TBitmap.Create;
+      imgeRMGGroup.Picture.SaveToClipboardFormat(iFormat, iData, pPalette);
+      FBmRMGGRP.LoadFromClipboardFormat(iFormat, iData, pPalette);
+      FRectRMGGRP := Rect(0, 0, FBmRMGGRP.Width, FBmRMGGRP.Height);
+      FRectImgGr :=
+        CalculateFittingRect(imgeRMGMesstechnik.ClientRect, FRectRMGGRP, 0);
+
+      FBmWico22 := TBitmap.Create;
+      imgeWico22.Picture.SaveToClipboardFormat(iFormat, iData, pPalette);
+      FBmWico22.LoadFromClipboardFormat(iFormat, iData, pPalette);
+      FRectWico22 := Rect(0, 0, FBmWico22.Width, FBmWico22.Height);
+      FRectImgWico22 :=
+        CalculateFittingRect(imgeRMGMesstechnik.ClientRect, FRectWico22, 0);
+      imgeWico22.Picture := nil;
+
+      FRunDir := 1;
+      FStopLive := False;
+    finally
+      Screen.Cursor:=Cursor_Save;
+    end;
+  end
+  else begin
+    FreeAndNil(FBmRMGMT);
+    FreeAndNil(FBmRMGGRP);
+    FreeAndNil(FBmWico22);
+  end;
+end;
+
+{--------------------------------------------}
+procedure TStartFenster.BuildLiveImage;
+{--------------------------------------------}
+const
+  C_Step = 5;
+var
+  FUpRectBm, FDownRectBm : TRect;
+  FUpRectIe, FDownRectIe : TRect;
+  FUpBitmap, FDownBitmap : TBitmap;
+  iBlend                 : SmallInt;
+begin
+  if (ModalResult = mrNone) and (not FStopLive) and
+    (not (csDestroying in Self.ComponentState)) and
+    (Assigned(FBmRMGMT)) and (Assigned(FBmRMGGRP)) and (Assigned(FBmWico22))
+  then begin
+    if (FStopLive) then Exit;
+    if (FRunDir = 1) and ((FStartBlend+C_Step) >= 250) then begin
+      FRunDir := 0;
+      Inc(FLiveFlag);
+    end
+    else if (FRunDir <> 1) and ((FStartBlend-C_Step) <= 0) then begin
+      FRunDir := 1;
+      Inc(FLiveFlag);
+    end;
+    if (FLiveFlag >= 4) then begin
+      FLiveFlag := 1;
+      FUpDownChange := (not FUpDownChange);
+    end;
+    if (FRunDir = 1) then Inc(FStartBlend, C_Step) else Dec(FStartBlend, C_Step);
+    case FLiveFlag of
+      1 : begin
+            FDownRectBm := FRectRMGMT;
+            FUpRectBm := FRectRMGGRP;
+            FDownRectIe := FRectImgMT;
+            FUpRectIe := FRectImgGr;
+            FDownBitmap := FBmRMGMT;
+            FUpBitmap := FBmRMGGRP;
+          end;
+      2 : begin
+            FDownRectBm := FRectWico22;
+            FUpRectBm := FRectRMGGRP;
+            FDownRectIe := FRectImgWico22;
+            FUpRectIe := FRectImgGr;
+            FDownBitmap := FBmWico22;
+            FUpBitmap := FBmRMGGRP;
+          end;
+      3 : begin
+            FDownRectBm := FRectWico22;
+            FUpRectBm := FRectRMGMT;
+            FDownRectIe := FRectImgWico22;
+            FUpRectIe := FRectImgMT;
+            FDownBitmap := FBmWico22;
+            FUpBitmap := FBmRMGMT;
+          end;
+      else begin
+            FDownRectBm := FRectRMGMT;
+            FUpRectBm := FRectRMGGRP;
+            FDownRectIe := FRectImgMT;
+            FUpRectIe := FRectImgGr;
+            FDownBitmap := FBmRMGMT;
+            FUpBitmap := FBmRMGGRP;
+          end;
+    end;
+
+    if (FStopLive) then Exit;
+    imgeRMGMesstechnik.Canvas.FillRect(imgeRMGMesstechnik.ClientRect);
+    if (FStopLive) then Exit;
+
+    if (FUpDownChange) then
+    iBlend := 250-FStartBlend
+    else iBlend := FStartBlend;
+
+    DeviceAlphaBlend(imgeRMGMesstechnik.Canvas.Handle, FDownBitmap.Canvas.Handle,
+      FDownRectIe, FDownRectBm, 250-iBlend);
+    if (FStopLive) then Exit;
+
+    DeviceAlphaBlend(imgeRMGMesstechnik.Canvas.Handle, FUpBitmap.Canvas.Handle,
+      FUpRectIe, FUpRectBm, iBlend);
+    if (FStopLive) then Exit;
+
+    if (FStopLive) then Exit;
+    imgeRMGMesstechnik.Repaint;
+    if (FStopLive) then Exit;
+
+    if (FStopLive) then Exit;
+    Application.ProcessMessages;
+    if (FStopLive) then Exit;
+  end;
+end;
+
+{--------------------------------------------}
+procedure TStartFenster.TimerLiveImageStartTimer(Sender: TObject);
+{--------------------------------------------}
+begin
+  TimerLiveImageStart.Enabled := False;
+  try
+    if (FStarted) then begin
+      FStarted := False;
+      InitBitmaps(True);
+    end;
+    BuildLiveImage;
+  finally
+    TimerLiveImageStart.Enabled := not FStopLive;
+  end;
+end;
+
+end.

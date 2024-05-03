@@ -1,0 +1,92 @@
+package DWIESER;
+
+{$R *.RES}
+{$R 'V:\DELPHI32\Package\Langzeit.dcr'}
+{$R 'V:\DELPHI32\Package\Mrgreg.dcr'}
+{$R 'V:\DELPHI32\Package\Lprint.dcr'}
+{$R 'V:\DELPHI32\Package\Wdialogs.dcr'}
+{$R 'V:\DELPHI32\Package\Serial.dcr'}
+{$R 'V:\DELPHI32\Package\Oprbtn.dcr'}
+{$R 'V:\DELPHI32\Package\Oiconbtn.dcr'}
+{$R 'V:\DELPHI32\Package\Dsfgoutl.dcr'}
+{$R 'V:\DELPHI32\Package\ZipMaster173\Vcl\ZipSFX.dcr'}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE ON}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Wieser-Komponenten'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl50,
+  vclsmp50,
+  Vcldb50,
+  Vclbde50,
+  vclado50,
+  dclado50,
+  vcljpg50;
+
+contains
+  Langzeit in 'V:\DELPHI32\Package\Langzeit.pas',
+  Objfile in 'V:\DELPHI32\Package\Objfile.pas',
+  Prndialo in 'V:\DELPHI32\Package\Prndialo.pas',
+  Mrgreg in 'V:\DELPHI32\Package\Mrgreg.pas',
+  Mrgstd in 'V:\DELPHI32\Package\Mrgstd.pas',
+  WStrUtils in 'V:\Delphi32Sql\Package\WStrUtils.pas',
+  Objdata in 'V:\DELPHI32\Package\Objdata.pas',
+  DBUtils in 'V:\DELPHI32\Package\DBUtils.pas',
+  Fdatum in 'V:\DELPHI32\Package\Fdatum.pas',
+  Myedit in 'V:\DELPHI32\Package\Myedit.pas',
+  Lprint in 'V:\DELPHI32\Package\Lprint.pas',
+  Wdialogs in 'V:\DELPHI32\Package\Wdialogs.pas' {InfoDialog},
+  WGraphics in 'V:\DELPHI32\Package\WGraphics.pas',
+  Lizenz32 in 'V:\Delphi32Sql\Package\Lizenz32.pas',
+  Pathini in 'V:\Delphi32Sql\Package\Pathini.pas',
+  novell in 'V:\Delphi32Sql\Package\Novell.pas',
+  T_Tools in 'V:\Delphi32Sql\Package\T_tools.pas',
+  T_Zeit in 'V:\Delphi32Sql\Package\T_zeit.pas',
+  SERIAL in 'V:\DELPHI32\Package\SERIAL.PAS',
+  oPrBtn in 'V:\DELPHI32\Package\Oprbtn.pas',
+  oIconBtn in 'V:\DELPHI32\Package\Oiconbtn.pas',
+  DSfGOutl in 'V:\DELPHI32\Package\Dsfgoutl.pas',
+  Password in 'V:\Delphi32Sql\Package\Password.pas' {FormPasswordDlg},
+  WTables in 'V:\Delphi32Sql\Package\Wtables.pas',
+  DbAutoInc in 'V:\Delphi32Sql\Package\DbAutoInc.pas',
+  WStream in 'V:\Delphi32Sql\Package\WStream.pas',
+  WChars in 'V:\Delphi32Sql\Package\WChars.pas',
+  InstTest in 'V:\Delphi32Sql\Package\Insttest.pas',
+  ZipMstr in 'V:\DELPHI32\Package\ZipMaster173\Vcl\ZipMstr.pas',
+  ZipSFX in 'V:\DELPHI32\Package\ZipMaster173\Vcl\ZipSFX.pas',
+  SortGrid in 'V:\DELPHI32\Package\ZipMaster173\Vcl\SortGrid.pas',
+  ZipMsg in 'V:\DELPHI32\Package\ZipMaster173\VCL\ZipMsg.pas',
+  ZipStructs in 'V:\DELPHI32\Package\ZipMaster173\VCL\ZipStructs.pas',
+  ZLibLoad in 'V:\DELPHI32\Package\ZipMaster173\VCL\ZLibLoad.pas',
+  DZUtils in 'V:\DELPHI32\Package\ZipMaster173\VCL\DZUtils.pas',
+  SFXInterface in 'V:\DELPHI32\Package\ZipMaster173\VCL\SFXInterface.pas',
+  SFXStructs in 'V:\DELPHI32\Package\ZipMaster173\VCL\SFXStructs.pas',
+  SortGridPreview in 'V:\DELPHI32\Package\ZipMaster173\VCL\SortGridPreview.pas' {SortGridPreviewForm},
+  UNZDLL in 'V:\DELPHI32\Package\ZipMaster173\VCL\UnzDll.pas',
+  ZCallBck in 'V:\DELPHI32\Package\ZipMaster173\VCL\ZCallBck.pas',
+  ZIPDLL in 'V:\DELPHI32\Package\ZipMaster173\VCL\ZipDll.pas';
+
+end.
+
+

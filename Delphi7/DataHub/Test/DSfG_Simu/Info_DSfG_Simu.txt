@@ -1,0 +1,3 @@
+DSfG_Simu.dpr nicht mehr benötigt, da WicomSrv im Simulationsmodus automatisch Simulationsarchive erzeugt;
+
+28.04.2015, WW
