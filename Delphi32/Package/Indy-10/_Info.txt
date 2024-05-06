@@ -1,0 +1,9 @@
+Indy-Komponenten Version 10.0.52 unter Delphi 7:
+
+- für Mailing verwendet (FileScanner)
+- Delphi-Bibliothekspfad um V:\Delphi32\Package\Indy-10 erweitern
+- benötigte DLLs: 
+		ssleay32.dll
+		libeay32.dll
+
+08.01.2016, WN
